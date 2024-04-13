@@ -19,10 +19,14 @@ jobs:
       - name: Install dependencies
         working-directory: bloglist-frontend/
         run: npm install
+      - name: Check style
+        working-directory: bloglist-frontend/
+        run: npm run eslint
       - name: Test
         working-directory: bloglist-frontend/
-        run: npm run test
+        run: npm run cypress:open
   setup_and_test_backend:
+    needs: [setup_and_test_frontend]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
@@ -32,4 +36,4 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Test
-        run: npm run test
+        run: npm run start:test
