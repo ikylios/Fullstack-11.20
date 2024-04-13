@@ -1,0 +1,39 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  setup_and_test_frontend:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        working-directory: bloglist-frontend/
+        run: npm install
+      - name: Check style
+        working-directory: bloglist-frontend/
+        run: npm run eslint
+      - name: Test
+        working-directory: bloglist-frontend/
+        run: npm run cypress:open
+  setup_and_test_backend:
+    needs: [setup_and_test_frontend]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Test
+        run: npm run start:test
